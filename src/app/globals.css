@@ -1,26 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Silkscreen:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Instrument+Serif:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://db.onlinewebfonts.com/c/5ac3fe7c6abd2f62067f266d89671492?family=HelveticaNowDisplay-Medium');
+@import url('https://db.onlinewebfonts.com/c/1aa3377e489837a26d019bba501e779d?family=HelveticaNowDisplayW01-Rg');
+@import url('https://db.onlinewebfonts.com/c/04e6981992c0e2e7642af2074ebe3901?family=Helvetica+Now+Display+Bold');
+
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-geist: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-silkscreen: 'Silkscreen', cursive;
+  --font-almarai: 'Almarai', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-instrument: 'Instrument Serif', serif;
+  --font-mainframe-heading: 'HelveticaNowDisplay-Medium', 'Helvetica Neue', Arial, sans-serif;
+  --font-mainframe-body: 'HelveticaNowDisplayW01-Rg', 'Helvetica Neue', Arial, sans-serif;
+  --font-vault-heading: 'Helvetica Now Display Bold', sans-serif;
+  --font-vault-body: 'Inter', sans-serif;
+  --color-prisma-primary: #DEDBC8;
+  --color-vault-text: #192837;
+  --color-vault-accent: #7342E2;
+  --color-vault-login: #F2F2EE;
+
+  /* Velorah Theme */
+  --velorah-bg: hsl(201, 100%, 13%);
+  --velorah-fg: hsl(0, 0%, 100%);
+  --velorah-muted-fg: hsl(240, 4%, 66%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --font-sans: var(--font-geist);
+  --font-silkscreen: var(--font-silkscreen);
+  --font-prisma: var(--font-almarai);
+  --font-serif: var(--font-instrument);
+  --font-mainframe-heading: var(--font-mainframe-heading);
+  --font-mainframe-body: var(--font-mainframe-body);
+  --font-vault-heading: var(--font-vault-heading);
+  --font-vault-body: var(--font-vault-body);
+  --color-primary: var(--color-prisma-primary);
+  --color-vault-text: var(--color-vault-text);
+  --color-vault-accent: var(--color-vault-accent);
+  --color-vault-login: var(--color-vault-login);
+  
+  --color-velorah-bg: var(--velorah-bg);
+  --color-velorah-fg: var(--velorah-fg);
+  --color-velorah-muted-fg: var(--velorah-muted-fg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply bg-[#F8FAFC] text-[#0B1120] dark:bg-[#0B1120] dark:text-[#F8FAFC] transition-colors duration-500;
 }
+
+/* Gradient Utility for Nexum CTA */
+.bg-nexum-gradient {
+  background: linear-gradient(to bottom, #2B2B2B, #101010);
+}
+.bg-nexum-gradient:hover {
+  opacity: 0.9;
+}
+
+/* Prisma Noise Overlays */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter2)'/%3E%3C/svg%3E");
+}
+
+/* Lumora Liquid Glass Effect */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Lumora Bobbing Animation */
+@keyframes train-bob {
+  0%, 100% { transform: translateY(0) scale(1.03); }
+  50% { transform: translateY(-6px) scale(1.03); }
+}
+.animate-train-bob {
+  animation: train-bob 3s ease-in-out infinite;
+}
+
+/* Velorah Fade Rise Animation */
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-rise { animation: fade-rise 0.8s ease-out both; }
+.animate-fade-rise-delay { animation: fade-rise 0.8s ease-out 0.2s both; }
+.animate-fade-rise-delay-2 { animation: fade-rise 0.8s ease-out 0.4s both; }
