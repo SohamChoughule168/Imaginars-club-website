@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "i.pravatar.cc" },
       { protocol: "https", hostname: "d8j0ntlcm91z4.cloudfront.net" },
       { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "soft-zoom-63098134.figma.site" },
     ],
   },
   async headers() {
@@ -20,6 +21,10 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
         ],
       },
     ];

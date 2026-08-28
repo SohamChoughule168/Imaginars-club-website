@@ -1,8 +1,28 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { ArrowLeft, Check } from 'lucide-react'
 import { servicesData } from '@/data/services'
+
+export function generateStaticParams() {
+  return servicesData.map((s) => ({ slug: s.slug }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const service = servicesData.find((s) => s.slug === slug)
+  if (!service) return { title: 'Service not found | ImaginarsClubServices' }
+  return {
+    title: `${service.title} | ImaginarsClubServices`,
+    description: service.desc,
+    openGraph: {
+      title: service.title,
+      description: service.desc,
+      type: 'website',
+    },
+  }
+}
 
 // In Next.js 15+, page params are an async Promise
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -16,7 +36,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const Icon = service.icon
 
   return (
-    <div className="bg-[#F8FAFC] dark:bg-[#0B1120] transition-colors duration-500 min-h-screen font-prisma selection:bg-black/20 dark:selection:bg-white/20 pt-32 pb-24">
+    <div className="bg-[#F8FAFC] dark:bg-[#0B1120] transition-colors duration-500 min-h-screen font-sans selection:bg-black/20 dark:selection:bg-white/20 pt-32 pb-24">
       <div className="max-w-4xl mx-auto px-5 sm:px-8 relative z-10">
         
         <Link href="/services" className="inline-flex items-center gap-2 text-[#0B1120]/60 dark:text-gray-500 hover:text-[#0B1120] dark:hover:text-[#DEDBC8] transition-colors mb-12 font-medium">
@@ -60,7 +80,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         <div className="text-center bg-white dark:bg-white/[0.02] shadow-xl dark:shadow-none border border-black/5 dark:border-white/5 rounded-[2rem] p-12 transition-colors">
           <h2 className="text-3xl sm:text-4xl text-[#0B1120] dark:text-[#DEDBC8] mb-6 font-medium">Ready to transform your business?</h2>
           <p className="text-[#0B1120]/60 dark:text-gray-400 mb-8 max-w-xl mx-auto">
-            Let's discuss how our {service.title} expertise can drive massive growth for your brand.
+            Let&apos;s discuss how our {service.title} expertise can drive massive growth for your brand.
           </p>
           <Link href="/contact" className="inline-flex items-center justify-center bg-[#0B1120] dark:bg-[#DEDBC8] text-white dark:text-[#0B1120] font-medium rounded-full px-8 py-4 text-lg hover:scale-105 transition-transform duration-300 shadow-xl">
             Start Your Project

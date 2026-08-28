@@ -1,8 +1,29 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
+import type { Metadata } from 'next'
 import { ArrowLeft, Target, Lightbulb, Trophy } from 'lucide-react'
 import { portfolioData } from '@/data/portfolio'
+
+export function generateStaticParams() {
+  return portfolioData.map((p) => ({ slug: p.slug }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const project = portfolioData.find((p) => p.slug === slug)
+  if (!project) return { title: 'Case study not found | ImaginarsClubServices' }
+  return {
+    title: `${project.headingLine1} ${project.headingLine2} | ImaginarsClubServices`,
+    description: project.subtext,
+    openGraph: {
+      title: `${project.headingLine1} ${project.headingLine2}`,
+      description: project.subtext,
+      type: 'article',
+    },
+  }
+}
 
 export default async function PortfolioProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
@@ -23,16 +44,18 @@ export default async function PortfolioProjectPage({ params }: { params: Promise
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-60 opacity-30"
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC]/90 dark:from-[#0B1120]/90 via-[#F8FAFC]/60 dark:via-[#0B1120]/60 to-[#F8FAFC] dark:to-[#0B1120] z-10 transition-colors duration-500" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#F8FAFC]/90 via-[#F8FAFC]/60 to-[#F8FAFC] transition-colors duration-500 dark:from-[#0B1120]/90 dark:via-[#0B1120]/60 dark:to-[#0B1120]" />
       </div>
 
       {/* Transparent PNG Overlay */}
       <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none opacity-50">
-        <img 
-          src="https://soft-zoom-63098134.figma.site/_assets/v11/0b4a435b2df2747593c43d7a1c9b4578f7d8d90c.png" 
-          alt="Overlay texture" 
+        <Image
+          src="https://soft-zoom-63098134.figma.site/_assets/v11/0b4a435b2df2747593c43d7a1c9b4578f7d8d90c.png"
+          alt=""
+          fill
+          sizes="100vw"
           className="w-full h-full object-cover animate-train-bob mix-blend-overlay"
         />
       </div>

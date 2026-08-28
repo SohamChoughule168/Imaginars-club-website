@@ -1,162 +1,134 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react'
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Star,
-  Sparkles,
-  ChevronDown,
-} from 'lucide-react'
-import Link from 'next/link'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import CountUp from 'react-countup'
-import { useInView } from 'react-intersection-observer'
-import TextReveal from '@/components/ui/TextReveal'
-import MagneticButton from '@/components/ui/MagneticButton'
-import {
-  services,
-  stats,
-  processSteps,
-  testimonials,
-} from '@/data/siteData'
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown, ArrowRight, ArrowUpRight, Star } from "lucide-react";
+import Button from "@/components/ui/Button";
+import TextReveal from "@/components/ui/TextReveal";
+import MagneticButton from "@/components/ui/MagneticButton";
+import Reveal from "@/components/ui/Reveal";
+import Marquee from "@/components/ui/Marquee";
+import Stat from "@/components/ui/Stat";
+import { services, stats, processSteps, testimonials } from "@/data/siteData";
+import { SITE } from "@/lib/utils";
 
-/* ---------------------------------- utils --------------------------------- */
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-const easeOut = [0.16, 1, 0.3, 1] as const
+const HERO_VIDEO =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260803_192301_9231ed6b-c55c-4a48-909c-4ebe11cf2e11.mp4";
 
-function Reveal({
-  children,
-  delay = 0,
-  className = '',
-}: {
-  children: React.ReactNode
-  delay?: number
-  className?: string
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8, ease: easeOut, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
-}
+const MARQUEE_ITEMS = [
+  "Websites",
+  "Mobile Apps",
+  "AI Automation",
+  "Search & SEO",
+  "Meta Ads",
+  "Video Content",
+  "Brand Identity",
+];
 
-function StatNumber({ value, suffix }: { value: number; suffix: string }) {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.5 })
-  return (
-    <span ref={ref} className="font-silkscreen text-4xl lg:text-5xl text-[#0B1120] dark:text-white tracking-tight">
-      {inView ? <CountUp end={value} duration={2} useEasing separator="," /> : '0'}
-      <span className="text-2xl text-blue-600 dark:text-blue-500">{suffix}</span>
-    </span>
-  )
-}
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.04] px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-[#0B1120]/60 dark:text-white/60">
-      <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-      {children}
-    </span>
-  )
-}
-
-/* ---------------------------------- page ---------------------------------- */
+/** Map homepage service ids to catalog slugs (see /services). */
+const SERVICE_SLUGS: Record<string, string> = {
+  "web-dev": "web-development",
+  mobile: "mobile-app-development",
+  ai: "ai-driven-website-solutions",
+  marketing: "digital-marketing",
+  video: "video-editing",
+  brand: "brand-management",
+  thumbnail: "thumbnail-generation",
+};
 
 export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    offset: ['start start', 'end start'],
-  })
-  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.08])
+    offset: ["start start", "end start"],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
 
   return (
-    <div className="w-full bg-[#F8FAFC] dark:bg-[#0B1120] transition-colors duration-500 overflow-x-clip">
-
-      {/* ================================ 1. HERO ================================ */}
-      <section ref={heroRef} className="relative h-[100svh] w-full flex flex-col overflow-hidden">
-        {/* Background video with parallax zoom */}
-        <motion.div style={{ scale: heroScale }} className="absolute inset-0 w-full h-full">
+    <div className="w-full overflow-x-clip bg-[#F8FAFC] transition-colors duration-500 dark:bg-[#0B1120]">
+      {/* ================================ HERO ================================ */}
+      <section
+        ref={heroRef}
+        className="relative flex h-[100svh] w-full flex-col overflow-hidden"
+      >
+        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <video
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260803_192301_9231ed6b-c55c-4a48-909c-4ebe11cf2e11.mp4"
-            className="w-full h-full object-cover"
+            src={HERO_VIDEO}
+            className="h-full w-full object-cover"
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#F8FAFC] dark:from-[#0B1120] via-black/25 to-black/50" />
-          {/* film grain */}
-          <div className="noise-overlay absolute inset-0 opacity-[0.06] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#F8FAFC] via-black/25 to-black/50 dark:from-[#0B1120]" />
+          <div className="noise-overlay absolute inset-0 opacity-[0.05]" />
         </motion.div>
 
-        {/* Bottom anchored hero content */}
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 mt-auto px-5 pb-14 sm:px-8 sm:pb-20 lg:px-12 lg:pb-28 w-full"
+          className="relative z-10 mt-auto w-full px-5 pb-16 sm:px-8 sm:pb-20 lg:px-10 lg:pb-24"
         >
-          <div className="max-w-5xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: easeOut, delay: 0.1 }}
-              className="mb-6"
-            >
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white/90">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+          <div className="mx-auto w-full max-w-7xl">
+            <div className="max-w-5xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+              >
+                <span className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-white/90 backdrop-blur-md">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                  Senior-led studio · Mumbai
                 </span>
-                Senior-led digital studio · Mumbai
-              </span>
-            </motion.div>
+              </motion.div>
 
-            <TextReveal
-              as="h1"
-              delay={200}
-              className="text-5xl sm:text-6xl lg:text-8xl font-semibold leading-[1.02] tracking-tight text-white mb-6"
-            >
-              We build digital experiences that win.
-            </TextReveal>
-
-            <motion.p
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: easeOut, delay: 0.7 }}
-              className="text-lg sm:text-xl text-white/85 max-w-2xl mb-10 leading-relaxed font-light"
-            >
-              Websites, mobile apps and AI-driven products — grown with search,
-              ads and content that measurably perform.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: easeOut, delay: 0.85 }}
-              className="flex flex-col sm:flex-row items-center gap-4"
-            >
-              <MagneticButton
-                href="/contact"
-                className="!px-9 !py-4 !text-sm !text-[#0B1120] !bg-white !border-white hover:!bg-gray-100 shadow-xl"
+              <TextReveal
+                as="h1"
+                delay={0.05}
+                className="mt-8 text-5xl font-semibold leading-[1.0] tracking-[-0.03em] text-white sm:text-6xl lg:text-8xl"
               >
-                Start a project <ArrowRight className="w-4 h-4" />
-              </MagneticButton>
-              <MagneticButton
-                href="/portfolio"
-                variant="secondary"
-                className="!bg-white/10 !backdrop-blur-md !border-white/20 hover:!bg-white/20"
+                We build digital experiences that win.
+              </TextReveal>
+
+              <motion.p
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: EASE, delay: 0.7 }}
+                className="mt-8 max-w-2xl text-base font-light leading-relaxed text-white/85 sm:text-xl"
               >
-                See our work <ArrowUpRight className="w-4 h-4" />
-              </MagneticButton>
-            </motion.div>
+                Websites, mobile apps and AI-driven products — grown with
+                search, ads and content that measurably perform.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: EASE, delay: 0.85 }}
+                className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center"
+              >
+                <MagneticButton
+                  href="/contact"
+                  className="bg-white px-8 py-3.5 text-[15px] font-medium text-[#0B1120] shadow-[0_1px_2px_rgba(11,17,32,0.2),0_10px_24px_-8px_rgba(0,0,0,0.5)] hover:bg-white/90"
+                >
+                  Start a project
+                  <ArrowRight className="h-4 w-4" />
+                </MagneticButton>
+                <MagneticButton
+                  href="/portfolio"
+                  className="border border-white/25 bg-white/5 px-8 py-3.5 text-[15px] font-medium text-white backdrop-blur-md hover:border-white/50 hover:bg-white/10"
+                >
+                  See our work
+                  <ArrowUpRight className="h-4 w-4" />
+                </MagneticButton>
+              </motion.div>
+            </div>
           </div>
         </motion.div>
 
@@ -165,136 +137,207 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4, duration: 1 }}
-          className="absolute bottom-6 right-6 lg:right-12 z-10 hidden sm:flex flex-col items-center gap-2 text-white/60"
+          className="absolute bottom-6 right-6 z-10 hidden flex-col items-center gap-2 text-white/60 sm:flex lg:right-10"
         >
-          <span className="text-[10px] uppercase tracking-[0.25em] [writing-mode:vertical-lr]">Scroll</span>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}>
-            <ChevronDown className="w-4 h-4" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] [writing-mode:vertical-rl]">
+            Scroll
+          </span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+          >
+            <ArrowDown className="h-4 w-4" />
           </motion.div>
         </motion.div>
-      </section>
 
-      {/* ============================== 2. STATISTICS ============================= */}
-      <section className="py-20 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-black/5 dark:border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-12">
-            {stats.map((stat, i) => (
-              <Reveal key={stat.label} delay={i * 0.08}>
-                <div className="flex flex-col gap-2">
-                  <StatNumber value={stat.value} suffix={stat.suffix} />
-                  <p className="text-sm text-[#0B1120]/60 dark:text-white/50 font-medium">{stat.label}</p>
-                </div>
+        {/* Hero meta */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6, duration: 1 }}
+          className="absolute bottom-6 left-6 z-10 hidden font-mono text-[10px] uppercase tracking-[0.3em] text-white/50 md:block lg:left-10"
+        >
+          Est. 2024 — Mumbai, India
+        </motion.div>
+{/* ========================= CAPABILITIES MARQUEE ======================== */}
+      <div className="relative z-10 border-y border-ink/10 bg-[#F8FAFC] py-5 transition-colors duration-500 dark:border-white/10 dark:bg-[#0B1120]">
+        <Marquee items={MARQUEE_ITEMS} />
+      </div>
+
+      {/* ============================== MANIFESTO ============================== */}
+      <section className="relative overflow-hidden py-24 sm:py-32 lg:py-40">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-7">
+              <Reveal>
+                <span className="inline-flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
+                  The studio
+                  <span aria-hidden="true" className="h-px w-8 bg-accent/40" />
+                </span>
               </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =============================== 3. SERVICES ============================== */}
-      <section className="py-24 sm:py-32 px-5 sm:px-8 lg:px-12 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto relative z-10">
-          <Reveal>
-            <div className="max-w-2xl mb-16">
-              <Eyebrow>What we do</Eyebrow>
-              <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#0B1120] dark:text-white mb-4">
-                Full-stack growth, under one roof.
-              </h2>
-              <p className="text-[#0B1120]/60 dark:text-white/60 leading-relaxed text-lg font-light">
-                From first pixel to first customer — seven disciplines engineered
-                to compound your growth.
-              </p>
+              <TextReveal
+                as="h2"
+                className="mt-7 text-3xl font-semibold leading-[1.06] tracking-[-0.03em] text-balance sm:text-4xl lg:text-[3.4rem]"
+              >
+                We are a senior-led studio that builds digital products worth
+                your customer&apos;s time.
+              </TextReveal>
             </div>
-          </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => (
-              <Reveal key={service.id} delay={(i % 3) * 0.08}>
-                <Link
-                  href="/services"
-                  className="group relative flex h-full flex-col items-start gap-6 p-8 rounded-3xl bg-white dark:bg-white/[0.02] shadow-xl dark:shadow-none border border-black/5 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-400/30 hover:-translate-y-1 transition-all duration-500"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-[#0B1120] dark:text-white group-hover:scale-110 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-500">
-                    <service.icon className="w-6 h-6" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-medium text-[#0B1120] dark:text-white mb-3">{service.title}</h3>
-                    <p className="text-[#0B1120]/60 dark:text-white/50 text-sm leading-relaxed">{service.shortDesc}</p>
-                  </div>
-                  <span className="mt-auto pt-4 flex items-center gap-2 text-sm font-medium text-[#0B1120]/40 dark:text-white/40 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    Learn more <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="flex flex-col justify-end lg:col-span-5">
+              <Reveal delay={0.1}>
+                <p className="max-w-md text-[15px] leading-relaxed opacity-65 sm:text-base">
+                  ImaginarsClub is a project-based studio in Mumbai. Senior
+                  people plan, design and ship your website, app or AI product —
+                  then grow it with search, ads and content that measurably
+                  perform. One accountable team, end to end.
+                </p>
+                <div className="mt-8 flex items-center gap-4">
+                  <span className="h-px w-12 bg-accent/50" aria-hidden="true" />
+                  <span className="font-mono text-[11px] uppercase tracking-[0.28em] opacity-50">
+                    Est. 2024 · Mumbai, India
                   </span>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================= 4. PROCESS ================================ */}
-      <section className="py-24 sm:py-32 px-5 sm:px-8 lg:px-12 border-y border-black/5 dark:border-white/5 bg-white/40 dark:bg-black/20 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto">
-          <Reveal>
-            <div className="text-center max-w-2xl mx-auto mb-20">
-              <Eyebrow>How we work</Eyebrow>
-              <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#0B1120] dark:text-white mb-4">
-                A process built for momentum.
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-            {processSteps.map((step, i) => (
-              <Reveal key={step.step} delay={i * 0.12}>
-                <div className="relative flex flex-col gap-5 pl-6 border-l border-black/10 dark:border-white/10">
-                  <div className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-blue-600 dark:bg-blue-400" />
-                  <div className="font-silkscreen text-4xl text-[#0B1120]/15 dark:text-white/15">{step.step}</div>
-                  <h3 className="text-xl font-medium text-[#0B1120] dark:text-white">{step.title}</h3>
-                  <p className="text-[#0B1120]/60 dark:text-white/50 leading-relaxed">{step.description}</p>
                 </div>
               </Reveal>
-            ))}
+            </div>
           </div>
+
+          {/* Stats */}
+          <Reveal delay={0.15} className="mt-20 grid grid-cols-2 gap-x-6 gap-y-12 border-t border-ink/10 pt-12 dark:border-white/10 sm:mt-28 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <Stat
+                key={stat.label}
+                value={stat.value}
+                suffix={stat.suffix}
+                label={stat.label}
+              />
+            ))}
+          </Reveal>
+        </div>
+      </section>
+      </section>
+{/* =============================== SERVICES =============================== */}
+      <section id="services" className="border-t border-ink/10 py-24 transition-colors duration-500 sm:py-32 dark:border-white/10">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-16 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="inline-flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
+                <span aria-hidden="true" className="h-px w-8 bg-accent/40" />
+                What we do
+              </span>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl lg:text-5xl">
+                One team, every discipline you need
+                <span className="serif-accent text-accent"> to grow.</span>
+              </h2>
+            </div>
+            <Button href="/services" variant="secondary" endIcon={<ArrowUpRight className="h-4 w-4" />}>
+              View all services
+            </Button>
+          </div>
+
+          <ol className="divide-y divide-ink/10 dark:divide-white/10">
+            {services.map((service, i) => (
+              <li key={service.id}>
+                <Reveal delay={Math.min(i * 0.04, 0.2)}>
+                  <a
+                    href={`/services/${SERVICE_SLUGS[service.id] ?? "services"}`}
+                    className="group grid grid-cols-1 gap-3 py-8 transition-all duration-300 sm:grid-cols-12 sm:items-baseline sm:gap-6 hover:bg-ink/[0.015] dark:hover:bg-white/[0.02] sm:px-3"
+                  >
+                    <span className="font-mono text-sm text-accent sm:col-span-1">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="text-xl font-semibold tracking-tight sm:col-span-4 sm:text-2xl">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed opacity-60 sm:col-span-5">
+                      {service.shortDesc}
+                    </p>
+                    <span className="hidden items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-accent transition-transform duration-300 group-hover:translate-x-1 sm:col-span-2 sm:flex">
+                      View
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </a>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+{/* ================================ PROCESS =============================== */}
+      <section className="bg-[#0B1120] py-24 text-white sm:py-32">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-16 max-w-2xl">
+            <span className="inline-flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.3em] text-[#7AA5F5]">
+              <span aria-hidden="true" className="h-px w-8 bg-[#7AA5F5]/40" />
+              How we work
+            </span>
+            <h2 className="mt-5 text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl lg:text-5xl">
+              A process built for momentum.
+            </h2>
+          </div>
+
+          <ol className="grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-8 lg:gap-12">
+            {processSteps.map((step, i) => (
+              <li key={step.step}>
+                <Reveal delay={i * 0.1}>
+                  <div className="border-t border-white/15 pt-6">
+                    <span className="font-mono text-sm text-white/40">
+                      {step.step}
+                    </span>
+                    <h3 className="mt-4 text-xl font-semibold tracking-tight">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-white/60">
+                      {step.description}
+                    </p>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
-      {/* ============================ 5. TESTIMONIALS ============================= */}
-      <section className="py-24 sm:py-32 px-5 sm:px-8 lg:px-12 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <Reveal>
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <Eyebrow>Client results</Eyebrow>
-              <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#0B1120] dark:text-white mb-4">
-                Numbers our clients brag about.
-              </h2>
-            </div>
-          </Reveal>
+      {/* ============================== TESTIMONIALS ============================ */}
+      <section id="testimonials" className="py-24 sm:py-32">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-16 max-w-2xl">
+            <span className="inline-flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.3em] text-accent">
+              <span aria-hidden="true" className="h-px w-8 bg-accent/40" />
+              Client results
+            </span>
+            <h2 className="mt-5 text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl lg:text-5xl">
+              Numbers our clients brag about.
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 0.1}>
-                <figure className="flex h-full flex-col gap-6 p-8 rounded-3xl bg-white dark:bg-white/[0.02] shadow-lg dark:shadow-none border border-black/5 dark:border-white/5">
+              <Reveal key={t.name} delay={i * 0.08}>
+                <figure className="flex h-full flex-col gap-6 rounded-3xl border border-ink/10 bg-surface p-8 shadow-[0_1px_2px_rgba(11,17,32,0.04),0_8px_24px_-8px_rgba(11,17,32,0.12)] transition-transform duration-300 hover:-translate-y-1 dark:border-white/10 dark:bg-ink-raised dark:shadow-none">
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-1">
+                    <div className="flex gap-1" aria-hidden="true">
                       {[...Array(t.rating)].map((_, j) => (
-                        <Star key={j} className="w-4 h-4 fill-blue-500 text-blue-500" />
+                        <Star key={j} className="h-4 w-4 fill-accent text-accent" />
                       ))}
                     </div>
-                    <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400">
+                    <span className="rounded-full bg-accent/10 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-accent">
                       {t.result}
                     </span>
                   </div>
-                  <blockquote className="text-[#0B1120]/70 dark:text-white/70 leading-relaxed text-lg italic font-medium">
+                  <blockquote className="flex-1 leading-relaxed text-[15px] opacity-80">
                     &ldquo;{t.quote}&rdquo;
                   </blockquote>
-                  <figcaption className="mt-auto flex items-center gap-4 pt-2">
+                  <figcaption className="flex items-center gap-4 border-t border-ink/10 pt-5 dark:border-white/10">
                     <div className="flex h-11 w-11 items-center justify-center rounded-full bg-nexum-gradient text-sm font-semibold text-white">
-                      {t.name.split(' ').map(n => n[0]).join('')}
+                      {t.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </div>
                     <div>
-                      <div className="text-[#0B1120] dark:text-white font-medium">{t.name}</div>
-                      <div className="text-[#0B1120]/40 dark:text-white/40 text-sm font-medium">{t.role}</div>
+                      <div className="text-sm font-semibold">{t.name}</div>
+                      <div className="text-[13px] opacity-50">{t.role}</div>
                     </div>
                   </figcaption>
                 </figure>
@@ -303,44 +346,59 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ================================ 6. CTA ================================= */}
-      <section className="py-24 sm:py-32 px-5 sm:px-8 lg:px-12">
+{/* ================================= CTA ================================= */}
+      <section className="px-5 pb-24 sm:px-8 sm:pb-32 lg:px-10">
         <Reveal>
-          <div className="max-w-5xl mx-auto rounded-[3rem] bg-white dark:bg-transparent border border-black/10 dark:border-white/10 p-10 sm:p-20 text-center relative overflow-hidden shadow-2xl dark:shadow-none">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-blue-500/10 dark:bg-blue-500/20 blur-[100px] pointer-events-none" />
-            <div className="noise-overlay absolute inset-0 opacity-[0.04] pointer-events-none" />
+          <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-ink/10 bg-white p-10 text-center shadow-[0_2px_4px_rgba(11,17,32,0.05),0_24px_48px_-12px_rgba(11,17,32,0.18)] sm:p-16 dark:border-white/10 dark:bg-ink-raised dark:shadow-none lg:p-20">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-24 left-1/2 h-64 w-3/4 -translate-x-1/2 rounded-full bg-accent/10 blur-[100px] dark:bg-accent/20"
+            />
+            <div className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.03]" />
 
             <div className="relative z-10">
               <TextReveal
                 as="h2"
-                className="justify-center text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#0B1120] dark:text-white mb-6"
+                className="justify-center text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl lg:text-5xl"
               >
                 Ready to become the brand everyone talks about?
               </TextReveal>
-              <p className="text-lg sm:text-xl text-[#0B1120]/60 dark:text-white/60 mb-10 max-w-2xl mx-auto font-light">
-                Tell us where you want to be in 12 months. We'll engineer the
+              <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed opacity-65 sm:text-base">
+                Tell us where you want to be in 12 months. We&apos;ll engineer the
                 shortest path there.
               </p>
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <MagneticButton
+              <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Button
                   href="/contact"
-                  className="!px-10 !py-5 !text-sm !text-white !bg-nexum-gradient hover:!opacity-90 shadow-xl"
+                  size="lg"
+                  endIcon={<ArrowRight className="h-4 w-4" />}
                 >
-                  Get started today <ArrowRight className="w-4 h-4" />
-                </MagneticButton>
-                <MagneticButton
-                  href="/services"
-                  variant="secondary"
-                  className="!text-[#0B1120] dark:!text-white !bg-black/5 dark:!bg-white/5 !border-black/10 dark:!border-white/10 hover:!bg-black/10 dark:hover:!bg-white/10"
-                >
+                  Get started today
+                </Button>
+                <Button href="/services" variant="secondary" size="lg">
                   Explore services
-                </MagneticButton>
+                </Button>
+              </div>
+
+              <div className="mx-auto mt-12 flex max-w-lg flex-col items-center justify-center gap-3 border-t border-ink/10 pt-8 sm:flex-row sm:gap-8 dark:border-white/10">
+                <a
+                  href={SITE.phoneHref}
+                  className="font-mono text-xs uppercase tracking-[0.2em] opacity-60 transition-opacity hover:opacity-100"
+                >
+                  {SITE.phone}
+                </a>
+                <span aria-hidden="true" className="hidden h-3 w-px bg-ink/20 sm:block dark:bg-white/20" />
+                <a
+                  href={`mailto:${SITE.email}`}
+                  className="font-mono text-xs uppercase tracking-[0.2em] opacity-60 transition-opacity hover:opacity-100"
+                >
+                  {SITE.email}
+                </a>
               </div>
             </div>
           </div>
         </Reveal>
       </section>
     </div>
-  )
+  );
 }

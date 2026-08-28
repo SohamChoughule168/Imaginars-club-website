@@ -1,119 +1,189 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Silkscreen:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Instrument+Serif:ital@1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://db.onlinewebfonts.com/c/5ac3fe7c6abd2f62067f266d89671492?family=HelveticaNowDisplay-Medium');
-@import url('https://db.onlinewebfonts.com/c/1aa3377e489837a26d019bba501e779d?family=HelveticaNowDisplayW01-Rg');
-@import url('https://db.onlinewebfonts.com/c/04e6981992c0e2e7642af2074ebe3901?family=Helvetica+Now+Display+Bold');
-
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --font-geist: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-silkscreen: 'Silkscreen', cursive;
-  --font-almarai: 'Almarai', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  --font-instrument: 'Instrument Serif', serif;
-  --font-mainframe-heading: 'HelveticaNowDisplay-Medium', 'Helvetica Neue', Arial, sans-serif;
-  --font-mainframe-body: 'HelveticaNowDisplayW01-Rg', 'Helvetica Neue', Arial, sans-serif;
-  --font-vault-heading: 'Helvetica Now Display Bold', sans-serif;
-  --font-vault-body: 'Inter', sans-serif;
-  --color-prisma-primary: #DEDBC8;
-  --color-vault-text: #192837;
-  --color-vault-accent: #7342E2;
-  --color-vault-login: #F2F2EE;
+/* ---------------------------------------------------------------------------
+   DESIGN TOKENS
+   Brand: ImaginarsClub Services — senior-led digital studio, Mumbai
+   Palette: ink-navy on near-paper; single accent blue used with restraint.
+   Typography: Geist (UI/headings), Geist Mono (labels/numbers), Instrument
+   Serif (editorial display accents).
+--------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, Consolas,
+    monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
 
-  /* Velorah Theme */
-  --velorah-bg: hsl(201, 100%, 13%);
-  --velorah-fg: hsl(0, 0%, 100%);
-  --velorah-muted-fg: hsl(240, 4%, 66%);
+  /* Core palette */
+  --color-paper: #f8fafc;
+  --color-ink: #0b1120;
+  --color-surface: #ffffff;
+  --color-ink-surface: #101828;
+  --color-ink-raised: #0e1628;
+
+  /* Accent blue (brand) */
+  --color-accent: #2563eb;
+  --color-accent-deep: #1d4ed8;
+  --color-accent-soft: #7aa5f5;
+
+  /* Premium shadow stacks */
+  --shadow-lift: 0 1px 2px rgba(11, 17, 32, 0.04),
+    0 8px 24px -8px rgba(11, 17, 32, 0.12);
+  --shadow-lift-lg: 0 2px 4px rgba(11, 17, 32, 0.05),
+    0 24px 48px -12px rgba(11, 17, 32, 0.18);
+  --shadow-glow: 0 0 0 1px rgba(37, 99, 235, 0.18),
+    0 8px 32px -8px rgba(37, 99, 235, 0.45);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-@theme {
-  --font-sans: var(--font-geist);
-  --font-silkscreen: var(--font-silkscreen);
-  --font-prisma: var(--font-almarai);
-  --font-serif: var(--font-instrument);
-  --font-mainframe-heading: var(--font-mainframe-heading);
-  --font-mainframe-body: var(--font-mainframe-body);
-  --font-vault-heading: var(--font-vault-heading);
-  --font-vault-body: var(--font-vault-body);
-  --color-primary: var(--color-prisma-primary);
-  --color-vault-text: var(--color-vault-text);
-  --color-vault-accent: var(--color-vault-accent);
-  --color-vault-login: var(--color-vault-login);
-  
-  --color-velorah-bg: var(--velorah-bg);
-  --color-velorah-fg: var(--velorah-fg);
-  --color-velorah-muted-fg: var(--velorah-muted-fg);
+/* ---------------------------------------------------------------------------
+   BASE
+--------------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper font-sans text-ink antialiased dark:bg-ink dark:text-[#f8fafc];
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-accent/90 text-white;
+  }
+
+  /* Consistent, visible keyboard focus */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Reduced motion: kill smooth scroll and long animations at the source */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
-body {
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  @apply bg-[#F8FAFC] text-[#0B1120] dark:bg-[#0B1120] dark:text-[#F8FAFC] transition-colors duration-500;
-}
+/* ---------------------------------------------------------------------------
+   SURFACES & EFFECTS
+--------------------------------------------------------------------------- */
 
-/* Gradient Utility for Nexum CTA */
+/* Primary CTA gradient — deep ink-navy, not a neon gradient */
 .bg-nexum-gradient {
-  background: linear-gradient(to bottom, #2B2B2B, #101010);
+  background: linear-gradient(180deg, #1b2234 0%, #0b1120 100%);
 }
 .bg-nexum-gradient:hover {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
-/* Prisma Noise Overlays */
+/* Film grain (SVG turbulence, no external asset) */
 .noise-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter2)'/%3E%3C/svg%3E");
+/* Hairline border helper (respects current color) */
+.hairline {
+  border: 1px solid currentColor;
+  opacity: 0.12;
 }
 
-/* Lumora Liquid Glass Effect */
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: none;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
+/* Editorial serif italic accent */
+.serif-accent {
+  @apply font-serif italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
-    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
-    rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+/* ---------------------------------------------------------------------------
+   MOTION PRIMITIVES
+--------------------------------------------------------------------------- */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+.animate-marquee-slow {
+  animation: marquee 60s linear infinite;
 }
 
-/* Lumora Bobbing Animation */
 @keyframes train-bob {
-  0%, 100% { transform: translateY(0) scale(1.03); }
-  50% { transform: translateY(-6px) scale(1.03); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1.04);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.04);
+  }
 }
 .animate-train-bob {
-  animation: train-bob 3s ease-in-out infinite;
+  animation: train-bob 5s ease-in-out infinite;
 }
 
-/* Velorah Fade Rise Animation */
 @keyframes fade-rise {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.animate-fade-rise { animation: fade-rise 0.8s ease-out both; }
-.animate-fade-rise-delay { animation: fade-rise 0.8s ease-out 0.2s both; }
-.animate-fade-rise-delay-2 { animation: fade-rise 0.8s ease-out 0.4s both; }
+.animate-fade-rise {
+  animation: fade-rise 0.7s var(--ease-out-expo) both;
+}
+.animate-fade-rise-delay {
+  animation: fade-rise 0.7s var(--ease-out-expo) 0.15s both;
+}
+.animate-fade-rise-delay-2 {
+  animation: fade-rise 0.7s var(--ease-out-expo) 0.3s both;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+  }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   SCROLLBAR (progressive enhancement)
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(11, 17, 32, 0.25) transparent;
+  }
+  .dark * {
+    scrollbar-color: rgba(248, 250, 252, 0.2) transparent;
+  }
+}

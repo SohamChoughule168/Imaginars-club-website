@@ -1,8 +1,30 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, Tag, User, Share2 } from 'lucide-react'
+import type { Metadata } from 'next'
+import { ArrowLeft, Calendar, Clock, Tag, User } from 'lucide-react'
+import CopyLinkButton from '@/components/ui/CopyLinkButton'
 import { blogPosts } from '@/data/blog'
+
+export function generateStaticParams() {
+  return blogPosts.map((p) => ({ slug: p.slug }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const post = blogPosts.find((p) => p.slug === slug)
+  if (!post) return { title: 'Article not found | ImaginarsClubServices' }
+  return {
+    title: `${post.title} | ImaginarsClubServices`,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      publishedTime: post.date,
+    },
+  }
+}
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
@@ -13,7 +35,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   }
 
   return (
-    <div className="relative w-full min-h-screen font-vault-body text-[#0B1120] dark:text-white bg-[#F8FAFC] dark:bg-[#0B1120] selection:bg-blue-600 dark:selection:bg-blue-500 selection:text-white pt-32 pb-24 transition-colors duration-500">
+    <div className="relative w-full min-h-screen  text-[#0B1120] dark:text-white bg-[#F8FAFC] dark:bg-[#0B1120] selection:bg-blue-600 dark:selection:bg-blue-500 selection:text-white pt-32 pb-24 transition-colors duration-500">
       
       <div className="max-w-[800px] mx-auto px-5 sm:px-8">
         
@@ -31,7 +53,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <span className="text-sm text-[#0B1120]/50 dark:text-white/50 font-bold flex items-center gap-2"><Clock className="w-4 h-4"/> {post.readTime}</span>
           </div>
 
-          <h1 className="font-vault-heading text-4xl sm:text-5xl md:text-6xl text-[#0B1120] dark:text-white mb-8 leading-[1.1] tracking-tight">
+          <h1 className="font-sans text-4xl sm:text-5xl md:text-6xl text-[#0B1120] dark:text-white mb-8 leading-[1.1] tracking-tight">
             {post.title}
           </h1>
 
@@ -46,14 +68,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               </div>
             </div>
             
-            <button className="w-10 h-10 rounded-full border border-black/10 dark:border-white/10 flex items-center justify-center hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white hover:border-blue-600 dark:hover:border-blue-500 transition-colors text-[#0B1120]/50 dark:text-white/50">
-              <Share2 className="w-4 h-4" />
-            </button>
+            <CopyLinkButton />
           </div>
         </div>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none prose-headings:font-vault-heading prose-headings:text-[#0B1120] dark:prose-headings:text-white prose-p:text-[#0B1120]/80 dark:prose-p:text-white/80 prose-p:font-medium prose-p:leading-relaxed prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-[#0B1120] dark:prose-strong:text-white">
+        <div className="prose prose-lg max-w-none prose-headings:font-sans prose-headings:text-[#0B1120] dark:prose-headings:text-white prose-p:text-[#0B1120]/80 dark:prose-p:text-white/80 prose-p:font-medium prose-p:leading-relaxed prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-[#0B1120] dark:prose-strong:text-white">
           {/* We'll parse the simple markdown from our data object manually for safety, or just split by paragraphs and headings */}
           {post.content.split('\n\n').map((block, i) => {
             const trimmed = block.trim()
@@ -70,7 +90,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Footer CTA */}
         <div className="mt-20 p-10 bg-blue-600/5 dark:bg-blue-400/5 rounded-[2rem] text-center border border-blue-600/10 dark:border-blue-400/10 shadow-lg dark:shadow-none">
-          <h3 className="font-vault-heading text-2xl mb-4 text-[#0B1120] dark:text-white">Ready to apply these insights?</h3>
+          <h3 className="font-sans text-2xl mb-4 text-[#0B1120] dark:text-white">Ready to apply these insights?</h3>
           <p className="text-[#0B1120]/70 dark:text-white/70 font-medium mb-8 max-w-md mx-auto">
             Our team of experts can help you implement these strategies directly into your business.
           </p>

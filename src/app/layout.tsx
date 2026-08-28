@@ -1,8 +1,30 @@
 import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { MotionConfig } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
+
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  weight: "400",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const SITE_URL = "https://www.imaginarsclubservices.com";
 const SITE_NAME = "ImaginarsClub Services";
@@ -25,6 +47,7 @@ export const metadata: Metadata = {
     "digital marketing agency",
     "Meta ads management",
     "brand management",
+    "website design Mumbai",
   ],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
@@ -57,8 +80,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAFAFC" },
-    { media: "(prefers-color-scheme: dark)", color: "#0A0B0F" },
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B1120" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -109,8 +132,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="antialiased font-sans selection:bg-black/20 dark:selection:bg-white/20">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geist.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+    >
+      <body className="selection:bg-[#2563EB]/90 selection:text-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -121,11 +148,19 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
+          <MotionConfig reducedMotion="user">
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-[#0B1120] focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-white dark:focus:bg-white dark:focus:text-[#0B1120]"
+            >
+              Skip to content
+            </a>
+            <Navbar />
+            <main id="main" className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </MotionConfig>
         </ThemeProvider>
       </body>
     </html>

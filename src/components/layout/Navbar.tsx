@@ -1,116 +1,176 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { ChevronDown, Menu, X } from 'lucide-react'
-import Link from 'next/link'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
+const NAV_LINKS = [
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "Blog", href: "/blog" },
+] as const;
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-
-  // Handle scroll and body lock
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    window.addEventListener('scroll', handleScroll)
-    // Initial check
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = ''
-    }
-  }, [menuOpen])
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <>
-      <div className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-[#0B1120]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-3' : 'py-5 sm:py-6'}`}>
-        <div className="w-full flex items-center justify-between px-5 sm:px-8 lg:px-12 pointer-events-auto">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="ImaginarsClub Services" className="h-8 w-8 object-contain rounded-md" />
-            <span className="text-lg font-semibold text-[#0B1120] dark:text-white tracking-tight">
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+          scrolled || menuOpen
+            ? "border-b border-ink/10 bg-[#F8FAFC]/85 backdrop-blur-xl dark:border-white/10 dark:bg-[#0B1120]/85"
+            : "border-b border-transparent bg-transparent"
+        )}
+      >
+        <nav
+          aria-label="Main navigation"
+          className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10"
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2.5"
+            aria-label="ImaginarsClub Services — home"
+          >
+            <Image
+              src="/logo.jpg"
+              alt=""
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-md object-contain"
+            />
+            <span className="text-[17px] font-semibold tracking-tight text-ink dark:text-white">
               ImaginarsClub
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-3">
-            <nav className="flex items-center gap-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-1.5 py-1.5 backdrop-blur-lg">
-              {['About', 'Portfolio'].map(link => (
-                <Link key={link} href={`/${link.toLowerCase()}`} className="rounded-full px-4 py-1.5 text-sm font-medium text-[#0B1120]/80 dark:text-white/80 hover:bg-black/10 dark:hover:bg-white/10 hover:text-[#0B1120] dark:hover:text-white transition-colors">
-                  {link}
-                </Link>
-              ))}
-              <Link href="/services" className="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-[#0B1120]/80 dark:text-white/80 hover:bg-black/10 dark:hover:bg-white/10 hover:text-[#0B1120] dark:hover:text-white transition-colors">
-                Services <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={cn(
+                  "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  isActive(link.href)
+                    ? "text-accent"
+                    : "text-ink/70 hover:text-ink dark:text-white/70 dark:hover:text-white"
+                )}
+              >
+                {link.label}
               </Link>
-              <Link href="/blog" className="rounded-full px-4 py-1.5 text-sm font-medium text-[#0B1120]/80 dark:text-white/80 hover:bg-black/10 dark:hover:bg-white/10 hover:text-[#0B1120] dark:hover:text-white transition-colors">
-                Blog
-              </Link>
-            </nav>
+            ))}
+          </div>
+
+          <div className="hidden items-center gap-3 md:flex">
             <ThemeToggle />
-            <Link href="/contact" className="self-stretch rounded-full px-6 py-1.5 flex items-center justify-center text-sm font-medium text-white bg-nexum-gradient transition-opacity border border-black/10 dark:border-white/10">
+            <Link
+              href="/contact"
+              className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-nexum-gradient px-5 text-sm font-medium text-white shadow-[0_1px_2px_rgba(11,17,32,0.1),0_8px_20px_-6px_rgba(11,17,32,0.45)] transition-all hover:brightness-110"
+            >
               Get Started
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
 
-          {/* Mobile Hamburger */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="flex items-center gap-2 md:hidden">
             <ThemeToggle />
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="relative h-10 w-10 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-lg z-50 flex items-center justify-center text-[#0B1120] dark:text-white overflow-hidden pointer-events-auto"
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-ink/[0.03] text-ink dark:border-white/10 dark:bg-white/[0.04] dark:text-white"
             >
-              <Menu className={`absolute w-5 h-5 transition-all duration-300 ${menuOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'}`} />
-              <X className={`absolute w-5 h-5 transition-all duration-300 ${menuOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'}`} />
+              <Menu
+                className={cn(
+                  "absolute h-5 w-5 transition-all duration-300",
+                  menuOpen ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
+                )}
+              />
+              <X
+                className={cn(
+                  "absolute h-5 w-5 transition-all duration-300",
+                  menuOpen ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
+                )}
+              />
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu Glass Overlay */}
-      <div 
-        className={`fixed inset-0 z-40 bg-white/80 dark:bg-[#0B1120]/80 backdrop-blur-md transition-opacity duration-300 md:hidden pointer-events-auto ${menuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        onClick={() => setMenuOpen(false)}
-      />
-      
-      {/* Mobile Menu Drawer */}
-      <div className={`fixed right-0 top-0 z-40 h-full w-72 bg-[#F8FAFC] dark:bg-[#0B1120] border-l border-black/10 dark:border-white/10 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden flex flex-col pointer-events-auto ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex flex-col px-6 pt-24 gap-2">
-          {[
-            { name: 'About', i: 0, href: '/about' },
-            { name: 'Portfolio', i: 1, href: '/portfolio' },
-            { name: 'Services', i: 2, hasIcon: true, href: '/services' },
-            { name: 'Blog', i: 3, href: '/blog' },
-          ].map((link) => (
-            <Link 
-              key={link.name} 
-              href={link.href} 
+        </nav>
+      </header>
+{/* Mobile navigation panel */}
+      <div
+        id="mobile-nav"
+        className={cn(
+          "fixed inset-0 z-40 flex flex-col bg-[#F8FAFC]/97 backdrop-blur-2xl transition-opacity duration-400 md:hidden dark:bg-[#0B1120]/97",
+          menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        )}
+      >
+        <div className="mt-24 flex flex-col gap-1 px-6">
+          {[{ label: "Home", href: "/" }, ...NAV_LINKS].map((link, i) => (
+            <Link
+              key={link.href}
+              href={link.href}
               onClick={() => setMenuOpen(false)}
-              className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-[#0B1120]/80 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#0B1120] dark:hover:text-white transition-all duration-500 ${menuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}`}
-              style={{ transitionDelay: `${(link.i + 1) * 60}ms` }}
+              className={cn(
+                "flex items-center justify-between border-b border-ink/10 py-4 text-2xl font-semibold tracking-tight transition-all duration-500 dark:border-white/10",
+                menuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0",
+                isActive(link.href)
+                  ? "text-accent"
+                  : "text-ink dark:text-white"
+              )}
+              style={{ transitionDelay: menuOpen ? `${60 + i * 50}ms` : "0ms" }}
             >
-              {link.name}
-              {link.hasIcon && <ChevronDown className="w-4 h-4 opacity-50" />}
+              {link.label}
+              <ArrowUpRight className="h-5 w-5 opacity-40" />
             </Link>
           ))}
-        </div>
-        <div className={`mt-auto px-6 pb-10 transition-all duration-400 delay-300 ${menuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <Link href="/contact" onClick={() => setMenuOpen(false)} className="w-full flex justify-center items-center rounded-full py-4 text-base font-medium text-white bg-nexum-gradient border border-black/10 dark:border-white/10">
-            Get started
+          <Link
+            href="/contact"
+            onClick={() => setMenuOpen(false)}
+            className={cn(
+              "mt-8 inline-flex h-12 items-center justify-center rounded-full bg-nexum-gradient text-base font-medium text-white transition-all duration-500",
+              menuOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            )}
+            style={{ transitionDelay: menuOpen ? "360ms" : "0ms" }}
+          >
+            Get Started
           </Link>
         </div>
       </div>
     </>
-  )
+  );
 }

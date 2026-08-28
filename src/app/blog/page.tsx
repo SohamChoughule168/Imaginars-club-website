@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, LockKeyhole, Fingerprint, ArrowRightCircle, Calendar, Tag, User, Clock } from 'lucide-react'
+import { ArrowRightCircle, Calendar, Tag, User, Clock } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { blogPosts } from '@/data/blog'
 
 const categories = [
@@ -32,7 +33,7 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="relative w-full min-h-screen font-vault-body text-[#0B1120] dark:text-white bg-[#F8FAFC] dark:bg-[#0B1120] selection:bg-blue-600 dark:selection:bg-blue-500 selection:text-white transition-colors duration-500">
+    <div className="relative w-full min-h-screen  text-[#0B1120] dark:text-white bg-[#F8FAFC] dark:bg-[#0B1120] selection:bg-blue-600 dark:selection:bg-blue-500 selection:text-white transition-colors duration-500">
       
       {/* HERO SECTION */}
       <section className="relative w-full h-[85svh] min-h-[600px] overflow-hidden flex flex-col justify-center">
@@ -57,7 +58,7 @@ export default function BlogPage() {
           >
             <motion.h1
               variants={fadeUp}
-              className="font-vault-heading text-[#0B1120] dark:text-white mb-6"
+              className="font-sans text-[#0B1120] dark:text-white mb-6"
               style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: '1.05', letterSpacing: '-0.01em' }}
             >
               Our Blog
@@ -65,7 +66,7 @@ export default function BlogPage() {
 
             <motion.p
               variants={fadeUp}
-              className="font-vault-body text-[#0B1120]/80 dark:text-white/80 mb-8 font-medium"
+              className=" text-[#0B1120]/80 dark:text-white/80 mb-8 font-medium"
               style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', lineHeight: '1.65' }}
             >
               Insights, strategies, and thought leadership on digital transformation, technology, and business growth. Stay updated with the latest trends and expert advice.
@@ -81,12 +82,19 @@ export default function BlogPage() {
           {/* Featured Post (Only show on 'All' category) */}
           {activeCategory === "All" && featuredPost && (
             <div className="mb-24">
-              <h2 className="font-vault-heading text-2xl sm:text-3xl text-[#0B1120] dark:text-white mb-8 tracking-tight">Featured Article</h2>
+              <h2 className="font-sans text-2xl sm:text-3xl text-[#0B1120] dark:text-white mb-8 tracking-tight">Featured Article</h2>
               <Link href={`/blog/${featuredPost.slug}`} className="block">
                 <div className="bg-white dark:bg-[#111A30] rounded-[2rem] p-8 sm:p-12 border border-black/5 dark:border-white/5 shadow-xl flex flex-col lg:flex-row gap-12 items-center cursor-pointer hover:shadow-2xl transition-shadow duration-500 group">
                   <div className="w-full lg:w-1/2 aspect-video bg-blue-600/5 dark:bg-blue-400/5 rounded-2xl overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 dark:from-blue-400/20 to-transparent mix-blend-multiply z-10 pointer-events-none" />
-                    <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=1280&q=85" alt="Featured AI" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 relative z-0" />
+                    <Image
+                      src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=1280&q=85"
+                      alt="Featured AI"
+                      fill
+                      unoptimized
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 relative z-0"
+                    />
                   </div>
                   <div className="w-full lg:w-1/2 flex flex-col items-start relative z-20">
                     <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -96,7 +104,7 @@ export default function BlogPage() {
                       <span className="text-sm text-[#0B1120]/50 dark:text-white/50 font-medium flex items-center gap-2"><Calendar className="w-4 h-4"/> {featuredPost.date}</span>
                       <span className="text-sm text-[#0B1120]/50 dark:text-white/50 font-medium flex items-center gap-2"><Clock className="w-4 h-4"/> {featuredPost.readTime}</span>
                     </div>
-                    <h3 className="font-vault-heading text-3xl sm:text-4xl lg:text-5xl mb-6 text-[#0B1120] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+                    <h3 className="font-sans text-3xl sm:text-4xl lg:text-5xl mb-6 text-[#0B1120] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
                       {featuredPost.title}
                     </h3>
                     <p className="text-[#0B1120]/70 dark:text-white/70 text-base sm:text-lg leading-relaxed mb-8 font-medium">
@@ -111,7 +119,7 @@ export default function BlogPage() {
                         <div className="text-xs font-medium text-[#0B1120]/50 dark:text-white/50">Author</div>
                       </div>
                     </div>
-                    <button className="font-vault-body font-semibold text-white dark:text-[#0B1120] bg-blue-600 dark:bg-blue-400 rounded-full px-8 py-4 inline-flex items-center gap-4 group-hover:scale-105 transition-transform">
+                    <button className=" font-semibold text-white dark:text-[#0B1120] bg-blue-600 dark:bg-blue-400 rounded-full px-8 py-4 inline-flex items-center gap-4 group-hover:scale-105 transition-transform">
                       Read Full Article <ArrowRightCircle className="w-5 h-5" />
                     </button>
                   </div>
@@ -121,7 +129,7 @@ export default function BlogPage() {
           )}
 
           <div className="mb-12">
-            <h2 className="font-vault-heading text-3xl sm:text-4xl text-[#0B1120] dark:text-white mb-8 tracking-tight">Latest Articles</h2>
+            <h2 className="font-sans text-3xl sm:text-4xl text-[#0B1120] dark:text-white mb-8 tracking-tight">Latest Articles</h2>
             
             {/* Filter Tabs */}
             <div className="flex flex-wrap gap-3">
@@ -144,7 +152,7 @@ export default function BlogPage() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode="popLayout">
-              {filteredPosts.filter(p => !p.featured || activeCategory !== "All").map((post, i) => (
+              {filteredPosts.filter(p => !p.featured || activeCategory !== "All").map((post) => (
                 <motion.div 
                   layout
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -162,7 +170,7 @@ export default function BlogPage() {
                       </div>
                     </div>
                     
-                    <h3 className="font-vault-heading text-xl sm:text-2xl mb-4 text-[#0B1120] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+                    <h3 className="font-sans text-xl sm:text-2xl mb-4 text-[#0B1120] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
                       {post.title}
                     </h3>
                     
