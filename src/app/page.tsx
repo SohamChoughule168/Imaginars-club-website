@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -8,9 +8,10 @@ import TextReveal from "@/components/ui/TextReveal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import Reveal from "@/components/ui/Reveal";
 import Marquee from "@/components/ui/Marquee";
+import ShaderCanvas from "@/components/ui/ShaderCanvas";
 import Stat from "@/components/ui/Stat";
 import { services, stats, processSteps, testimonials } from "@/data/siteData";
-import { SITE } from "@/lib/utils";
+import { SITE, cn } from "@/lib/utils";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -40,6 +41,7 @@ const SERVICE_SLUGS: Record<string, string> = {
 
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -56,14 +58,20 @@ export default function Home() {
         className="relative flex h-[100svh] w-full flex-col overflow-hidden"
       >
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
+          {/* Signature layer: bespoke WebGL aurora (also the no-video fallback) */}
+          <ShaderCanvas className="absolute inset-0 h-full w-full" />
           <video
             src={HERO_VIDEO}
-            className="h-full w-full object-cover"
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
+              videoReady ? "opacity-100" : "opacity-0",
+            )}
             autoPlay
             loop
             muted
             playsInline
             preload="metadata"
+            onCanPlay={() => setVideoReady(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#F8FAFC] via-black/25 to-black/50 dark:from-[#0B1120]" />
           <div className="noise-overlay absolute inset-0 opacity-[0.05]" />
