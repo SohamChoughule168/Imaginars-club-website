@@ -201,7 +201,7 @@ export const portfolioProjects = [
 ];
 
 export const contactInfo = {
-  phone: "+91 93728 09022",
+  phone: "+91 86553 65607",
   email: "imaginarsclubservices@gmail.com",
   address: "3 Vikrant Residency, Near Station Road, Kanjurmarg East, Mumbai, Maharashtra 400042, India",
 };

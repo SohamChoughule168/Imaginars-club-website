@@ -96,7 +96,7 @@ const jsonLd = {
       name: SITE_NAME,
       url: SITE_URL,
       email: "imaginarsclubservices@gmail.com",
-      telephone: "+91 93728 09022",
+      telephone: "+91 86553 65607",
       foundingDate: "2024",
       description: SITE_DESCRIPTION,
       address: {
